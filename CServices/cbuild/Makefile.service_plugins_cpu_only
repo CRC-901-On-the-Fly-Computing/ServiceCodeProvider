@@ -1,0 +1,56 @@
+SERVICES_ALL=\
+	service_median \
+	service_sobel \
+	service_grey \
+	service_gausslowpass \
+	service_morphedgedetection \
+	service_blend \
+	service_canny \
+	service_contrast \
+	service_deform \
+	service_dim \
+	service_grayhistoequal \
+	service_maxrgb \
+	service_negative \
+	service_pixelate \
+	service_radialblur \
+	service_reflect \
+	service_rotate \
+	service_whitebalance
+
+CC=gcc
+CFLAGS=-O3 -Wall
+PGCC=/opt/pgi/linux86-64/18.4/bin/pgcc
+PGCFLAGS=-acc -ta=tesla,cuda8.0 -O3 -Minfo
+
+all: mkdirectories clean common $(SERVICES_ALL)
+
+$(SERVICES_ALL):
+	cd ../csrc/service_plugins/build && \
+	$(CC) $(CFLAGS) -fPIC -c -o $@_scpu.o ../$@/$@_scpu.c
+	cd ../csrc/service_plugins/build && \
+	$(CC) $(CFLAGS) -shared -o lib$@_scpu.so $@_scpu.o
+	
+	cd ../csrc/service_plugins/build && \
+	$(CC) $(CFLAGS) -fPIC -c -o $@_cpu.o ../$@/$@_cpu.c
+	cd ../csrc/service_plugins/build && \
+	$(CC) $(CFLAGS) -shared -o lib$@_cpu.so $@_cpu.o -lgomp
+	
+	cd ../csrc/service_plugins/build && \
+	$(CC) $(CFLAGS) -fPIC -c -o $@.o ../$@/$@.c
+	cd ../csrc/service_plugins/build && \
+	$(CC) $(CFLAGS) -shared -o lib$@.so $@.o common.o -ldl -L. -l$@_scpu -l$@_cpu 
+
+.PHONY: common clean
+
+mkdirectories:
+	mkdir -p ../csrc/service_plugins/build
+
+common:
+	cd ../csrc/service_plugins/build && \
+	$(CC) $(CFLAGS) -fPIC -c -o $@.o ../$@.c
+
+clean:
+	cd ../csrc/service_plugins/build && \
+	rm -rf *.o *.so *.hmf *.hmf.cu
+

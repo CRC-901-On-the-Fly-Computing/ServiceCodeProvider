@@ -1,0 +1,42 @@
+plugins {
+    id 'java-library'
+    id "com.github.johnrengelman.shadow" version "2.0.4"
+}
+
+version = 1.4
+sourceCompatibility = 1.8
+
+
+repositories {
+    mavenCentral()
+
+    maven {
+        url "https://nexus.cs.upb.de/repository/maven-releases/"
+    }
+}
+
+
+dependencies {
+
+    // https://mvnrepository.com/artifact/ai.libs.thirdparty/interruptible-meka
+    compile group: 'ai.libs.thirdparty', name: 'interruptible-meka', version: '0.1.0'
+
+    // https://mvnrepository.com/artifact/ai.libs.thirdparty/interruptible-weka
+    compile group: 'ai.libs.thirdparty', name: 'interruptible-weka', version: '0.1.2'
+
+    // https://mvnrepository.com/artifact/nz.ac.waikato.cms.weka.thirdparty/bounce
+    compile group: 'nz.ac.waikato.cms.weka.thirdparty', name: 'bounce', version: '0.18'
+
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
+    //    provided project(":SEDE.core")
+
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.0'
+
+}
+
+shadowJar {
+    archiveName = "$baseName.$extension"
+}

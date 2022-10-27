@@ -1,0 +1,27 @@
+JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+
+CC=gcc
+CFLAGS=-O3 -Wall
+
+CSOURCES=\
+	common.c \
+	plugin_bridge.c
+COBJECTS=$(CSOURCES:.c=.o)
+
+VPATH=../csrc/pluginbridge
+
+all: mkdirectories clib_plugin_bridge libpluginbridge.so
+
+mkdirectories:
+	mkdir -p ../csrc/pluginbridge/build
+
+clib_plugin_bridge:
+	javah -classpath ../build/classes/java/main -d ../csrc/pluginbridge/include C2Plugins.Plugin
+
+libpluginbridge.so: $(COBJECTS)
+	cd ../csrc/pluginbridge/build && \
+	$(CC) $(CFLAGS) -I$(JAVA_HOME)/include/ -shared -o $@ $+ -ldl
+
+%.o: %.c
+	cd ../csrc/pluginbridge/build && \
+	$(CC) $(CFLAGS) -I$(JAVA_HOME)/include/linux -I$(JAVA_HOME)/include -fPIC -c -o $@ ../../$<

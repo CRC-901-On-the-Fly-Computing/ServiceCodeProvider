@@ -1,0 +1,27 @@
+JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+
+CSOURCES=\
+	imagemagick.c
+
+COBJECTS=$(CSOURCES:.c=.o)
+CC=gcc
+CFLAGS=-O3 -Wall
+
+VPATH=../csrc/imagebridge
+
+all: mkdirectories clib_im libimagemagick.so
+
+mkdirectories:
+	mkdir -p ../csrc/imagebridge/build
+
+clib_im:
+	javah -classpath ../build/classes/java/main -d ../csrc/imagebridge/include C2Data.C2ImageMagickCaller
+
+libimagemagick.so: $(COBJECTS)
+	cd ../csrc/imagebridge/build && \
+	$(CC) $(CFLAGS) -shared -o $@ $+ `Magick-config --ldflags --libs`
+
+%.o: %.c
+	cd ../csrc/imagebridge/build && \
+	$(CC) $(CFLAGS) `Magick-config --cflags --cppflags` -I$(JAVA_HOME)/include/linux -I$(JAVA_HOME)/include -I/usr/include/ImageMagick-6/ -I/usr/include/ImageMagick/ -fPIC -c -o $@ ../../$<
+

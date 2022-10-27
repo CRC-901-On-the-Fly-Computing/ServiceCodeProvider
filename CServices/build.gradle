@@ -1,0 +1,60 @@
+plugins {
+    id 'java'
+}
+
+version 'unspecified'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    compile files('../../sede/SEDE.core-0.0.13.jar')
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+
+task make_imagebridge(type:Exec) {
+    workingDir 'cbuild/'
+
+    commandLine './make_imagebridge.sh'
+
+    //store the output instead of printing to the console:
+    standardOutput = new ByteArrayOutputStream()
+
+    //extension method stopTomcat.output() can be used to obtain the output:
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+task make_pluginbridge(type:Exec) {
+    workingDir 'cbuild/'
+
+    commandLine './make_pluginbridge.sh'
+
+    //store the output instead of printing to the console:
+    standardOutput = new ByteArrayOutputStream()
+
+    //extension method stopTomcat.output() can be used to obtain the output:
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
+
+task make_services(type:Exec) {
+    workingDir 'cbuild/'
+
+    commandLine './make_services.sh'
+
+    //store the output instead of printing to the console:
+    standardOutput = new ByteArrayOutputStream()
+
+    //extension method stopTomcat.output() can be used to obtain the output:
+    ext.output = {
+        return standardOutput.toString()
+    }
+}
