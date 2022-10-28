@@ -1,2 +1,1 @@
-Somehow push your stuff here. We may talk about the folder structure later on.
-Please push to the develop branch. We gonna merge to the master whenever needed. This way we know why something breaks if something breaks.
+The libraries within this folder are provided by the [Catalano Framework](https://github.com/DiegoCatalano/Catalano-Framework) project - thanks, Diego! 
